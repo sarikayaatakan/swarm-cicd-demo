@@ -30,7 +30,7 @@ jobs:
       - name: 5. Swarm Servisini Güncelle veya Başlat
         run: |
           if ! docker service inspect my-web-app > /dev/null 2>&1; then
-            docker service create --name my-web-app --replicas 2 -p 8080:80 --with-registry-auth ghcr.io/sarikayaatakan/swarm-cicd-demo:latest
+            docker service create --name my-web-app --replicas 2 -p 8081:80 --with-registry-auth ghcr.io/sarikayaatakan/swarm-cicd-demo:latest
           else
             docker service update --image ghcr.io/sarikayaatakan/swarm-cicd-demo:latest --with-registry-auth --force my-web-app
           fi
