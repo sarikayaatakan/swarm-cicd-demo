@@ -1,1 +1,881 @@
-<h1>Merhaba! Bu sayfa GitHub Actions CI/CD ile Swarm'a deploy edildi. v2.0</h1>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atakan Sarıkaya | DevOps & Cloud Infrastructure</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #080b10;
+      --bg2: #0d1117;
+      --bg3: #111820;
+      --green: #00ff88;
+      --green-dim: rgba(0,255,136,0.12);
+      --blue: #00b4ff;
+      --blue-dim: rgba(0,180,255,0.1);
+      --gold: #f0b429;
+      --text: #c9d1d9;
+      --text-dim: #8b949e;
+      --border: rgba(255,255,255,0.06);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5%;
+      height: 64px;
+      background: rgba(8,11,16,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: var(--green);
+      letter-spacing: 0.05em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-terminal-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--green-dim);
+      border: 1px solid rgba(0,255,136,0.3);
+      border-radius: 6px;
+      color: var(--green);
+      text-decoration: none;
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .nav-terminal-btn:hover {
+      background: rgba(0,255,136,0.2);
+      border-color: var(--green);
+    }
+
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 0 10%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute;
+      top: 20%; right: 5%;
+      width: 500px; height: 500px;
+      background: radial-gradient(ellipse, rgba(0,180,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-glow2 {
+      position: absolute;
+      bottom: 10%; left: 0%;
+      width: 400px; height: 400px;
+      background: radial-gradient(ellipse, rgba(0,255,136,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-content { max-width: 700px; position: relative; z-index: 1; }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border: 1px solid rgba(0,255,136,0.3);
+      border-radius: 100px;
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--green);
+      margin-bottom: 28px;
+      background: var(--green-dim);
+    }
+
+    .hero-badge .dot {
+      width: 6px; height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { opacity:1; box-shadow: 0 0 0 0 rgba(0,255,136,0.4); }
+      50% { opacity:0.7; box-shadow: 0 0 0 4px rgba(0,255,136,0); }
+    }
+
+    .hero-name {
+      font-size: clamp(42px, 6vw, 80px);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .hero-name .accent { color: var(--green); }
+
+    .hero-role {
+      font-size: clamp(16px, 2vw, 22px);
+      color: var(--blue);
+      font-weight: 400;
+      margin-bottom: 24px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .hero-desc {
+      font-size: 16.5px;
+      line-height: 1.75;
+      color: var(--text-dim);
+      max-width: 580px;
+      margin-bottom: 40px;
+    }
+
+    .hero-desc strong {
+      color: #f0f6fc;
+      font-weight: 500;
+    }
+
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+
+    .btn-primary {
+      padding: 13px 28px;
+      background: var(--green);
+      color: #000;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      text-decoration: none;
+      transition: all 0.2s;
+      letter-spacing: 0.01em;
+    }
+
+    .btn-primary:hover {
+      background: #00e07a;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 30px rgba(0,255,136,0.3);
+    }
+
+    .btn-secondary {
+      padding: 13px 28px;
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 15px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      border-color: rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px; left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-dim);
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%,100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(6px); }
+    }
+
+    .scroll-line {
+      width: 1px; height: 40px;
+      background: linear-gradient(to bottom, var(--text-dim), transparent);
+    }
+
+    section { padding: 100px 10%; }
+
+    .section-title {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.02em;
+      margin-bottom: 60px;
+    }
+
+    #experience { background: var(--bg2); }
+
+    .timeline { position: relative; max-width: 800px; }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--green), var(--blue), transparent);
+    }
+
+    .timeline-item {
+      padding: 0 0 52px 40px;
+      position: relative;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s ease;
+    }
+
+    .timeline-item.visible { opacity: 1; transform: translateY(0); }
+
+    .timeline-dot {
+      position: absolute;
+      left: -5px; top: 6px;
+      width: 11px; height: 11px;
+      background: var(--green);
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(0,255,136,0.6);
+    }
+
+    .timeline-dot.blue { background: var(--blue); box-shadow: 0 0 12px rgba(0,180,255,0.6); }
+    .timeline-dot.gold { background: var(--gold); box-shadow: 0 0 12px rgba(240,180,41,0.6); }
+
+    .timeline-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+
+    .timeline-company {
+      font-size: 13px;
+      color: var(--blue);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .timeline-role {
+      font-size: 20px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .timeline-desc {
+      font-size: 14.5px;
+      line-height: 1.65;
+    }
+
+    .timeline-desc ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .timeline-desc li {
+      color: #d0d7de;
+      display: flex;
+      align-items: baseline;
+    }
+
+    .timeline-desc li .arrow {
+      margin-right: 10px;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+
+    #skills { background: var(--bg); }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(17, 1fr);
+      gap: 12px;
+    }
+
+    .skill-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 8px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: all 0.25s;
+      cursor: default;
+      opacity: 0;
+      transform: scale(0.9);
+    }
+
+    .skill-card.visible { opacity: 1; transform: scale(1); }
+
+    .skill-card:hover {
+      border-color: rgba(0,255,136,0.3);
+      background: rgba(0,255,136,0.04);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+    }
+
+    .skill-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; }
+    .skill-icon svg, .skill-icon img { width: 100%; height: 100%; }
+
+    .skill-name {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-dim);
+      text-align: center;
+      letter-spacing: 0.02em;
+    }
+
+    #certs { background: var(--bg2); }
+
+    .certs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .cert-card {
+      padding: 24px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: all 0.25s;
+      opacity: 0;
+      transform: translateY(16px);
+    }
+
+    .cert-card.visible { opacity: 1; transform: translateY(0); }
+
+    .cert-card:hover {
+      border-color: rgba(240,180,41,0.3);
+      background: rgba(240,180,41,0.03);
+    }
+
+    .cert-icon { font-size: 26px; margin-bottom: 12px; }
+
+    .cert-name { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 6px; }
+    .cert-org { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+
+    .cert-target {
+      margin-top: 14px;
+      padding: 10px 12px;
+      background: rgba(240,180,41,0.06);
+      border-radius: 8px;
+      border-left: 3px solid var(--gold);
+      font-size: 12px;
+      color: var(--gold);
+    }
+
+    #contact { background: var(--bg); }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      max-width: 900px;
+    }
+
+    .contact-info { display: flex; flex-direction: column; gap: 20px; }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.2s;
+    }
+
+    .contact-item:hover {
+      border-color: rgba(0,255,136,0.3);
+      background: var(--green-dim);
+      transform: translateX(4px);
+    }
+
+    .contact-item-icon {
+      width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .contact-item-label { font-size: 12px; color: var(--text-dim); margin-bottom: 3px; }
+    .contact-item-value { font-size: 14px; font-weight: 500; }
+
+    .contact-cta {
+      padding: 36px;
+      background: linear-gradient(135deg, rgba(0,255,136,0.08), rgba(0,180,255,0.05));
+      border: 1px solid rgba(0,255,136,0.15);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .contact-cta h3 { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+    .contact-cta p { font-size: 15px; color: var(--text-dim); line-height: 1.7; margin-bottom: 28px; }
+
+    footer {
+      padding: 32px 10%;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    footer a { color: var(--green); text-decoration: none; font-family: 'JetBrains Mono', monospace; }
+
+    .pipeline-box {
+      margin-top: 60px;
+      padding: 32px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      max-width: 700px;
+    }
+
+    .pipeline-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--green);
+      margin-bottom: 20px;
+    }
+
+    .pipeline-steps { display: flex; flex-direction: column; gap: 14px; }
+
+    .pipeline-step { display: flex; align-items: flex-start; gap: 14px; }
+
+    .pipeline-step-icon {
+      width: 28px; height: 28px;
+      background: var(--green-dim);
+      border: 1px solid rgba(0,255,136,0.3);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .pipeline-step-text { font-size: 14px; color: var(--text-dim); line-height: 1.6; }
+    .pipeline-step-text strong { color: var(--text); }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(30px); }
+      to { opacity:1; transform: translateY(0); }
+    }
+
+    .hero-content > * { animation: fadeUp 0.7s ease both; }
+    .hero-badge { animation-delay: 0.1s; }
+    .hero-name { animation-delay: 0.2s; }
+    .hero-role { animation-delay: 0.3s; }
+    .hero-desc { animation-delay: 0.4s; }
+    .hero-actions { animation-delay: 0.5s; }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 6%; }
+      .nav-links { display: none; }
+      #hero, section { padding-left: 6%; padding-right: 6%; }
+      .contact-grid { grid-template-columns: 1fr; gap: 30px; }
+      .skills-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">atakan@portfolio:~$</div>
+  <ul class="nav-links">
+    <li><a href="#experience">Deneyim</a></li>
+    <li><a href="#skills">Yetkinlikler</a></li>
+    <li><a href="#certs">Sertifikalar</a></li>
+    <li><a href="#contact">İletişim</a></li>
+  </ul>
+  <a class="nav-terminal-btn" href="terminal.html">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+    Terminal Mod
+  </a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      $ open-to-work --status=active
+    </div>
+    <h1 class="hero-name">Atakan<br><span class="accent">Sarıkaya</span></h1>
+    <p class="hero-role">Cloud / DevOps / Linux System Administrator</p>
+    <p class="hero-desc">
+      Kurumsal Linux ortamlarında (RHEL/CentOS) uygulama operasyonu ve container teknolojileri alanında <strong>2 yılı aşkın production ortamı</strong> deneyimine sahip bir <strong>Sistem Uzmanıyım</strong>.
+    </p>
+    <div class="hero-actions">
+      <a href="Atakan_Sarikaya_CV.pdf" target="_blank" class="btn-primary">CV İndir</a>
+      <a href="#contact" class="btn-secondary">İletişime Geç</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    scroll
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <h2 class="section-title">Deneyimlerim</h2>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-date">Ekim 2025 — Temmuz 2026</div>
+      <div class="timeline-company">Türk Telekom via Sekom A.Ş.</div>
+      <div class="timeline-role">Element Management Systems / Uygulama Operasyon Uzmanı</div>
+      <div class="timeline-desc">
+        <ul>
+          <li><span class="arrow" style="color:var(--green)">▸</span><span>RHEL/CentOS tabanlı kurumsal sistemlerin operasyonel yönetimi ve olay müdahale süreçlerinin yürütülmesi</span></li>
+          <li><span class="arrow" style="color:var(--green)">▸</span><span>Prometheus, Grafana ve Alertmanager ile alarm mekanizmaları kurarak log analizi ve SLA hedeflerinin korunmasını sağlama</span></li>
+          <li><span class="arrow" style="color:var(--green)">▸</span><span>Docker ortamında monitoring uygulamalarının deployment ve operasyonel yönetimi</span></li>
+          <li><span class="arrow" style="color:var(--green)">▸</span><span>systemd servisleri olarak çalışan Java uygulamalarının kesintisiz dağıtımını (deployment) yürütme ve log analizleriyle kök neden (troubleshooting) tespiti yapma</span></li>
+          <li><span class="arrow" style="color:var(--green)">▸</span><span>Rutin operasyonel kontrolleri Bash scriptler ile otomatikleştirerek manuel iş yükünü ve olay müdahale sürelerini optimize etme</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot blue"></div>
+      <div class="timeline-date">Haziran 2024 — Ekim 2025</div>
+      <div class="timeline-company">Sekom A.Ş.</div>
+      <div class="timeline-role">DevSecOps Bulut Operasyonları Ekibi / Yazılım Destek Uzmanı</div>
+      <div class="timeline-desc">
+        <ul>
+          <li><span class="arrow" style="color:var(--blue)">▸</span><span>Docker ve OpenShift ortamlarında Java/Python uygulamalarının deployment yönetimi</span></li>
+          <li><span class="arrow" style="color:var(--blue)">▸</span><span>Prometheus, Grafana ve Alertmanager ile izleme ve alarm yapılandırması; olay tespit süreçleri</span></li>
+          <li><span class="arrow" style="color:var(--blue)">▸</span><span>PostgreSQL ve Oracle veritabanlarında yedekleme (backup/restore) süreçlerini yürütme ve veri bütünlüğü sağlama</span></li>
+          <li><span class="arrow" style="color:var(--blue)">▸</span><span>Linux sunucular üzerinde systemd servis yönetimi, log takibi ve kesintisiz uygulama deploy desteği</span></li>
+          <li><span class="arrow" style="color:var(--blue)">▸</span><span>Jira ve Confluence ile olay/değişiklik yönetimi ve teknik dokümantasyon hazırlanması</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot gold"></div>
+      <div class="timeline-date">Ağustos 2023 — Ekim 2023</div>
+      <div class="timeline-company">İstanbul Büyükşehir Belediyesi (İBB)</div>
+      <div class="timeline-role">Yazılım Geliştirme Stajyeri</div>
+      <div class="timeline-desc">
+        <ul>
+          <li><span class="arrow" style="color:var(--gold)">▸</span><span>Python (Flask) ve SQLite mimarisiyle veritabanı CRUD operasyonlarını, veri doğrulama ve kullanıcı akışlarını içeren görev yönetim modülünün geliştirilmesi</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="pipeline-box">
+    <div class="pipeline-title">// CI/CD Pipeline — Bu Portfolio Nasıl Deploy Oluyor?</div>
+    <div class="pipeline-steps">
+      <div class="pipeline-step">
+        <div class="pipeline-step-icon">1</div>
+        <div class="pipeline-step-text"><strong>GitHub Actions CI:</strong> Her push'ta otomatik HTML lint ve secret detection taraması çalışır.</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-step-icon">2</div>
+        <div class="pipeline-step-text"><strong>Test kapısı:</strong> Testlerden geçemeyen kod production'a çıkmaz — deployment otomatik bloklanır.</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-step-icon">3</div>
+        <div class="pipeline-step-text"><strong>Plesk Webhook CD:</strong> Testler geçildiğinde Plesk'e webhook tetiklenir, site otomatik güncellenir.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <h2 class="section-title">Yetkinliklerim</h2>
+
+  <div class="skills-grid">
+    <div class="skill-card">
+      <div class="skill-icon"><img src="https://cdn.simpleicons.org/linux/FCC624" alt="Linux"></div>
+      <span class="skill-name">Linux</span>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon"><img src="https://cdn.simpleicons.org/docker/2496ED" alt="Docker"></div>
+      <span class="skill-name">Docker</span>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon"><img src="https://cdn.simpleicons.org/redhatopenshift/EE0000" alt="OpenShift"></div>
+      <span class="skill-name">OpenShift</span>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon"><img src="https://cdn.simpleicons.org/kubernetes/326CE5" alt="Kubernetes"></div>
+      <span class="skill-name">Kubernetes</span>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon"><img src="https://cdn.simpleicons.org/prometheus/E6522C" alt="Prometheus"></div>
+      <span class="skill-name">Prometheus</span>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon"><img src="https://cdn.simpleicons.org/grafana/F46800" alt="Grafana"></div>
+      <span class="skill-name">Grafana</span>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon"><img src="https://cdn.simpleicons.org/postgresql/336791" alt="PostgreSQL"></div>
+      <span class="skill-name">PostgreSQL</span>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">
+        <svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="22" cy="22" rx="20" ry="13" fill="none" stroke="#F80000" stroke-width="4"/>
+        </svg>
+      </div>
+      <span class="skill-name">Oracle</span>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon"><img src="https://cdn.simpleicons.org/git/F05032" alt="Git"></div>
+      <span class="skill-name">Git</span>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon"><img src="https://cdn.simpleicons.org/githubactions/2088FF" alt="GitHub Actions"></div>
+      <span class="skill-name">GitHub Actions</span>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon"><img src="https://cdn.simpleicons.org/gnubash/4EAA25" alt="Bash"></div>
+      <span class="skill-name">Bash</span>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon"><img src="https://cdn.simpleicons.org/python/3776AB" alt="Python"></div>
+      <span class="skill-name">Python</span>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon"><img src="https://cdn.simpleicons.org/jira/0052CC" alt="Jira"></div>
+      <span class="skill-name">Jira</span>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon"><img src="https://cdn.simpleicons.org/confluence/0052CC" alt="Confluence"></div>
+      <span class="skill-name">Confluence</span>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon"><img src="https://cdn.simpleicons.org/datagrip/22D3EE" alt="DataGrip"></div>
+      <span class="skill-name">DataGrip</span>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon"><img src="https://cdn.simpleicons.org/dbeaver/A67C52" alt="DBeaver"></div>
+      <span class="skill-name">DBeaver</span>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon"><img src="https://cdn.simpleicons.org/huawei/CF0A2C" alt="Huawei Cloud"></div>
+      <span class="skill-name">Huawei Cloud</span>
+    </div>
+  </div>
+</section>
+
+<!-- CERTS -->
+<section id="certs">
+  <h2 class="section-title">Sertifikalar</h2>
+
+  <div class="certs-grid">
+    <div class="cert-card">
+      <div class="cert-icon"><img src="https://cdn.simpleicons.org/redhat/EE0000" style="width:32px;height:32px"></div>
+      <div class="cert-name">Red Hat System Administration I</div>
+      <div class="cert-org">RH124 — Linux sistem yönetimi, RHEL operasyonları ve kullanıcı/yetki yönetimi</div>
+    </div>
+
+    <div class="cert-card">
+      <div class="cert-icon"><img src="https://cdn.simpleicons.org/huawei/CF0A2C" style="width:32px;height:32px"></div>
+      <div class="cert-name">HCCDA — Huawei Cloud Tech Essentials</div>
+      <div class="cert-org">Huawei Cloud · Compute, Storage, Network ve Database servisleri · Cloud mimarisi ve dağıtık uygulama yönetimi</div>
+    </div>
+
+    <div class="cert-card">
+      <div class="cert-icon">🌐</div>
+      <div class="cert-name">Network Temelleri</div>
+      <div class="cert-org">BTK Akademi — Ağ topolojileri, TCP/IP protokolleri, alt ağ yapılandırması ve yönlendirme</div>
+    </div>
+
+    <div class="cert-card">
+      <div class="cert-icon">🗄️</div>
+      <div class="cert-name">Uygulamalarla SQL</div>
+      <div class="cert-org">BTK Akademi — İlişkisel veritabanı yönetimi, veri sorgulama, indeksleme ve performans optimizasyonu</div>
+    </div>
+
+    <div class="cert-card" style="border-color: rgba(240,180,41,0.2);">
+      <div class="cert-icon">🎯</div>
+      <div class="cert-name">Hedef Sertifikalar</div>
+      <div class="cert-org">CNCF Kubestronaut programına hazırlanıyorum:</div>
+      <div class="cert-target">CKA &nbsp;·&nbsp; CKAD &nbsp;·&nbsp; CKS &nbsp;·&nbsp; KCNA &nbsp;·&nbsp; KCSA</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <h2 class="section-title">İletişim</h2>
+
+  <div class="contact-grid">
+    <div class="contact-info">
+      <a class="contact-item" id="email-link">
+        <div class="contact-item-icon">✉️</div>
+        <div>
+          <div class="contact-item-label">E-posta</div>
+          <div class="contact-item-value" id="email-display"></div>
+        </div>
+      </a>
+
+      <a class="contact-item" href="https://linkedin.com/in/atakansarikaya" target="_blank">
+        <div class="contact-item-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </div>
+        <div>
+          <div class="contact-item-label">LinkedIn</div>
+          <div class="contact-item-value">linkedin.com/in/atakansarikaya</div>
+        </div>
+      </a>
+
+      <a class="contact-item" href="tel:+905529225277">
+        <div class="contact-item-icon">📞</div>
+        <div>
+          <div class="contact-item-label">Telefon</div>
+          <div class="contact-item-value">+90 552 922 52 77</div>
+        </div>
+      </a>
+
+      <a class="contact-item" href="Atakan_Sarikaya_CV.pdf" target="_blank">
+        <div class="contact-item-icon">📄</div>
+        <div>
+          <div class="contact-item-label">CV</div>
+          <div class="contact-item-value">Atakan_Sarikaya_CV.pdf</div>
+        </div>
+      </a>
+    </div>
+
+    <div class="contact-cta">
+      <h3>Birlikte çalışalım.</h3>
+      <p>DevOps, cloud altyapı ve otomasyon konularında fırsat arıyorum. İstanbul merkezli, remote pozisyonlara da açığım.</p>
+      <a id="mesaj-btn" class="btn-primary" style="display:inline-block; text-align:center;">Mesaj Gönder</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2026 Atakan Sarıkaya</span>
+  <span>📍 İstanbul, Türkiye</span>
+  <a href="terminal.html">← Terminal Mod</a>
+</footer>
+
+<script>
+  const u = 'atakansarikayawork';
+  const d = 'gmail.com';
+  const email = u + '@' + d;
+  const el = document.getElementById('email-display');
+  const lnk = document.getElementById('email-link');
+  const btn = document.getElementById('mesaj-btn');
+  if (el) el.textContent = email;
+  if (lnk) lnk.href = 'mailto:' + email;
+  if (btn) btn.href = 'mailto:' + email;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, entry.target.dataset.delay || 0);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.timeline-item').forEach((el, i) => {
+    el.dataset.delay = i * 120;
+    observer.observe(el);
+  });
+
+  document.querySelectorAll('.skill-card').forEach((el, i) => {
+    el.dataset.delay = i * 50;
+    observer.observe(el);
+  });
+
+  document.querySelectorAll('.cert-card').forEach((el, i) => {
+    el.dataset.delay = i * 100;
+    observer.observe(el);
+  });
+
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 100) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current ? '#fff' : '';
+    });
+  });
+</script>
+</body>
+</html>
