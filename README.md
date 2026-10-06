@@ -140,4 +140,4 @@ Bu bir laboratuvar ortamıdır ve bilinçli olarak kabul edilen sınırlamaları
 
 ---
 
-*Bu laboratuvar ortamı, DevOps süreçlerini pratik etmek amacıyla hazırlanmıştır.*
+*Bu laboratuvar ortamı, modern DevOps süreçlerini pratik etmek amacıyla hazırlanmıştır.*
