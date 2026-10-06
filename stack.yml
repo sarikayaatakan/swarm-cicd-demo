@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  my-web-app:
+    image: ghcr.io/sarikayaatakan/swarm-cicd-demo:${IMAGE_TAG:-latest}
+    ports:
+      - "8081:80"
+    healthcheck:
+      # NOT: İmajda wget yoksa (ör. Debian tabanlı imajlar) curl ile değiştirin.
+      test: ["CMD-SHELL", "wget -qO- http://localhost:80/ > /dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first          # önce yeni container ayağa kalkar, sonra eskisi kapanır
+        failure_action: rollback    # sağlıksız sürüm otomatik geri alınır
+        monitor: 15s
+      rollback_config:
+        parallelism: 1
+        order: start-first
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 128M
+        reservations:
+          cpus: "0.10"
+          memory: 32M
