@@ -5,15 +5,21 @@ on:
     branches:
       - main
 
-# GHCR (GitHub İmaj Deposu) üzerine yazma izni
 permissions:
   contents: read
   packages: write
 
+concurrency:
+  group: swarm-deploy
+  cancel-in-progress: false
+
+env:
+  IMAGE: ghcr.io/sarikayaatakan/swarm-cicd-demo
+  STACK: webapp
+
 jobs:
   deploy:
     runs-on: self-hosted
-
     steps:
       - name: 1. Repoyu Çek
         uses: actions/checkout@v4
@@ -21,16 +27,37 @@ jobs:
       - name: 2. GitHub Registry'ye Giriş (GHCR)
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: 3. İmajı Derle
-        run: docker build -t ghcr.io/sarikayaatakan/swarm-cicd-demo:latest .
+      - name: 3. İmajı Derle (commit SHA + latest etiketi)
+        run: docker build -t $IMAGE:${{ github.sha }} -t $IMAGE:latest .
 
-      - name: 4. İmajı GHCR'a Yükle
-        run: docker push ghcr.io/sarikayaatakan/swarm-cicd-demo:latest
-
-      - name: 5. Swarm Servisini Güncelle veya Başlat
+      - name: 4. Güvenlik Taraması (Trivy)
         run: |
-          if ! docker service inspect my-web-app > /dev/null 2>&1; then
-            docker service create --name my-web-app --replicas 2 -p 8081:80 --with-registry-auth ghcr.io/sarikayaatakan/swarm-cicd-demo:latest
-          else
-            docker service update --image ghcr.io/sarikayaatakan/swarm-cicd-demo:latest --with-registry-auth --force my-web-app
-          fi
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            aquasec/trivy:latest image \
+            --exit-code 1 --severity CRITICAL --ignore-unfixed \
+            $IMAGE:${{ github.sha }}
+
+      - name: 5. İmajı GHCR'a Yükle
+        run: |
+          docker push $IMAGE:${{ github.sha }}
+          docker push $IMAGE:latest
+
+      - name: 6. Swarm Stack'ini Güncelle
+        run: |
+          IMAGE_TAG=${{ github.sha }} docker stack deploy \
+            -c stack.yml --with-registry-auth --prune $STACK
+
+      - name: 7. Smoke Test ve Otomatik Rollback
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fs -o /dev/null http://localhost:8081; then
+              echo "Servis sağlıklı."
+              exit 0
+            fi
+            echo "Bekleniyor ($i/30)..."
+            sleep 5
+          done
+          echo "Smoke test başarısız, rollback yapılıyor."
+          docker service rollback ${STACK}_my-web-app
+          exit 1
